@@ -3,7 +3,4 @@ modules:
   - service-a
   - service-b
 dependencies:
-  - github.com/spf13/viper
-  - github.com/spf13/viper
-  - github.com/spf13/viper
-  - github.com/spf13/viper
+  - github.com/spf13/viper@latest

@@ -3,11 +3,7 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"io"
-	"log"
 	"os"
-	"os/exec"
-	"path/filepath"
 
 	"github.com/calimapp/x/gowork/workspace"
 )
@@ -37,29 +33,7 @@ func RunGet(args []string) {
 	ws := workspace.Read()
 
 	for _, mod := range ws.Modules {
-		absPath, _ := filepath.Abs(mod)
-		fmt.Printf("🔄 Running go get %s in %s\n", dependency, absPath)
-
-		// Run go get
-		getCmd := exec.Command("go", "get", dependency)
-		getCmd.Dir = absPath
-		getCmd.Stdout = io.Discard
-		getCmd.Stderr = io.Discard
-		if err := getCmd.Run(); err != nil {
-			log.Printf("❌ go get failed in %s: %v", mod, err)
-			continue
-		}
-
-		// Run go mod tidy
-		tidyCmd := exec.Command("go", "mod", "tidy")
-		tidyCmd.Dir = absPath
-		tidyCmd.Stdout = io.Discard
-		tidyCmd.Stderr = io.Discard
-		if err := tidyCmd.Run(); err != nil {
-			log.Printf("❌ go mod tidy failed in %s: %v", mod, err)
-		} else {
-			fmt.Printf("✅ Synced %s in %s\n", dependency, mod)
-		}
+		workspace.GetDependency(mod, dependency)
 	}
 	ws.Dependencies = append(ws.Dependencies, dependency)
 	ws.Save()
